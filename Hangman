@@ -1,0 +1,109 @@
+import random
+import time
+import sys
+
+
+def start_game():
+    ask_user_start = input("Would you like to play a game of Hangman? (y = yes, n = no) ")
+    if ask_user_start == "y":
+        ask_user_name = input("What is your name? ")
+        print("Your game is starting! Good Luck, " + ask_user_name + "!")
+        play_game()
+    
+    elif ask_user_start == "n":
+        print("Awwe, Alright maybe anothher time!")
+        exit()
+    
+    else:
+        print("I did not recognize your answer!")
+    
+def play_game():
+    words_to_guess = ["january", "python", "holes", "freedom"] #Word Bank
+    word = random.choice(words_to_guess) #Randomly chooses a word
+    number_of_times_guessed_wrong = 0 #Number of times guessed so that they dont get infinite guesses
+    number_of_times_guessed_right = 0 #Number of times guessed correctly so that it can check if you have guessed the full word
+    letters_guessed = [] #Saves all letters guessed
+    win_loss = 0 #A varaible so that at the end an if statement can tell if you won or not
+    lives_left = 7 #Lives left
+    lives_vs_live = " lives"
+
+    five = "_____"
+    six = "______"
+    seven = "_______" #Empty word
+    eight = "________"
+    
+    user_word = "" #Empty word becasue it wont always be the same amount of charecters
+    
+    letters_in_word = (len(word)) #Finds how many letters are in word
+    
+    if letters_in_word == 5: #Chooses how many spaces to have in empty word
+        user_word = five
+    elif letters_in_word == 6: #Chooses how many spaces to have in empty word
+        user_word = six
+    elif letters_in_word == 7: #Chooses how many spaces to have in empty word
+        user_word = seven
+    elif letters_in_word == 8: #Chooses how many spaces to have in empty word
+        user_word = eight
+        
+    print("Your word is " + user_word + ". Good Luck!")
+    
+    while True: #Goes until the user word is equal to the actual word
+        guess = input("Guess a letter: ")
+        
+        if guess.isnumeric():
+            print("Please guess a letter not a number!")
+    
+        elif guess in word:
+            index_of_guess_in_word = word.find(guess) #Finds out where the guess is in the actual word
+            user_word = user_word[:index_of_guess_in_word] + guess + user_word[index_of_guess_in_word + 1:] #Replaces the empty word with the guess
+            print("Great Job! Your word is now: " + user_word) #Prints the empty word with the letters correctly guessed so far
+                
+            word = word[:index_of_guess_in_word] + "_" + word[index_of_guess_in_word + 1:] #Pulls letter guessed correctly out of word so you can guess it again if 2 are there
+                
+            print("Below are the letters you have guessed so far! ")
+            print(letters_guessed)
+            print("")
+            print("")
+            number_of_times_guessed_right = number_of_times_guessed_right + 1 #Number of times guessed correctly
+            if number_of_times_guessed_right == letters_in_word: #Checks if Number of times guessed correctly equals the amount of letters in word and if so you have guessed all letters in secret word
+                win_loss = 1 #Makes win_loss equal one so the final if statement knows you won
+                break #Breaks out of while loop
+        
+        elif guess not in word: #Adds incorrectly guessed letter into a list
+            number_of_times_guessed_wrong =  number_of_times_guessed_wrong + 1 #Number of times guessed wrong
+            lives_left = 7 - number_of_times_guessed_wrong #Subracts number of incoorect guesses from lives left so that it can display how many lives you have
+            letters_guessed.append(guess) #Adds the incorrect guess to list of letters you have incorrectly guessed so far
+                
+            if lives_left < 2: #Just changes lives to life so that when you have 1 life left it doesnt say 1 lives left
+                lives_vs_live = " life"
+            
+            
+            print("Too bad that letter was not in the word. You have " + str(lives_left) + lives_vs_live + " left!") #Prints how many lives you have left
+            print("Below are the letters you have guessed so far! ") #Prints letters you have guessed so far
+            print(letters_guessed) #Prints letters you have guessed so far
+            print("And this is your word currently! " + user_word)
+            print("")
+            print("")
+            if number_of_times_guessed_wrong > 6:
+                win_loss = 2 #If win_loss equals 2 you lost
+                break #Breaks from while loop
+    
+    if win_loss == 1:
+        print("Congrats! You have guessed the word")
+        
+    else:
+        print("Too bad, better luck next time!")
+    
+start_game()
+
+while True: #After they win or lose their first game it goes to this
+    play_again = input("Would you like to play again? (y = yes, n = no) ")
+    if play_again == "y":
+        play_game()
+        
+    elif play_again == "n":
+        print("Im sad to see you go.  Bye Bye!")
+        exit()
+        
+    else:
+        print("I did not recognize the answer!")
